@@ -29,6 +29,7 @@ export class AppComponent implements OnInit {
   public committerLable: string[] = [];
   public committerCount: number[] = [];
   public comitterColor: string[] = [];
+  public totalAuthorCommits : number = 0;
   
   public commits = [];
   public totalCommit: { key: string, value : number};
@@ -66,8 +67,9 @@ export class AppComponent implements OnInit {
   doAfterconstructor(){
   
       for( let element in this.data ){
-        let commitDate = this.data[element].commiter.date;
-        let committerName = this.data[element].commiter.name;
+        let commitDate = this.data[element].author.date;
+        //let committerName = this.data[element].author.name;
+        let committerName = this.data[element].author.email;
         
         if ( this.totalCommitMap.get( commitDate) == null ){
           console.log("not found");
@@ -75,30 +77,29 @@ export class AppComponent implements OnInit {
           //this.dateLable.push(commitDate);
         }else{
           let value = this.totalCommitMap.get(commitDate);
-          this.totalCommitMap.set(commitDate, ++value);
+          this.totalCommitMap.set(commitDate, value + 1);
         }      
 
         if ( this.developerCommitMap.get(committerName) == null ){
           this.developerCommitMap.set(committerName, 1);
         }else{
           let value = this.developerCommitMap.get(committerName);
-          this.developerCommitMap.set(committerName, ++value);
+          this.developerCommitMap.set(committerName, value+1);
         }
       }
 
       this.totalCommitMap.forEach((value: number, key: string) => {
-        //console.log(key, value);
+        
         this.dateLable.push(key);
         this.countLable.push(value);
-        this.dateColor.push('#1E90FF');
         this.totalDateCommits++;
       });
 
       this.developerCommitMap.forEach((value: number, key: string) => {
-        //console.log(key, value);
+        
         this.committerLable.push(key);
         this.committerCount.push(value);
-        this.comitterColor.push('#42f4ce');
+        this.totalAuthorCommits++;
       });
 
       console.log( this.dateLable);
