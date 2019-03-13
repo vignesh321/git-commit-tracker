@@ -1,5 +1,43 @@
-.canvasDiv{
+.chart1{
 
+    width: 60%;
+    /* height: 400px; */
+}
+
+.chart2{
+    display: block;
+    float: right;
+    width: 600px;
+    /* width: 30%; */
+    /* height: 200px; */
+}
+
+/* #barChart{
     width: 1000px;
     height: 400px;
+
 }
+
+#comitterBarChart{
+    width: 600px;
+    height: 300px;
+
+}
+ */
+
+
+/* canvas {
+  
+  border: 1px solid red;
+
+  display: block;
+  float: left;
+}
+
+.container {
+ 
+  border: 1px solid blue;
+
+  
+  overflow: auto;
+} */

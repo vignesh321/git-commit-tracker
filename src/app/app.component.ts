@@ -8,7 +8,7 @@ import {fullCommit, Commiter, Author} from "./commits"
 import SampleJson from '../assets/data/data.json';
 import { JsonPipe } from '@angular/common';
 import { totalCommit } from './totalCommits';
-import { mapChildrenIntoArray } from '@angular/router/src/url_tree';
+//import { totalCommitMap  ChildrenIntoArray } from '@angular/router/src/url_tree';
 
 @Component({
   selector: 'app-root',
@@ -23,12 +23,19 @@ export class AppComponent implements OnInit {
 
   public dateLable: string[] = [];
   public countLable: number[] = [];
+  public dateColor: string[] = [];
+  public totalDateCommits : number = 0;
+
+  public committerLable: string[] = [];
+  public committerCount: number[] = [];
+  public comitterColor: string[] = [];
   
   public commits = [];
   public totalCommit: { key: string, value : number};
   public totalCommitArray: totalCommit[];
 
-  public map = new Map();
+  public totalCommitMap = new Map();
+  public developerCommitMap= new Map();
 
   //constructor(private _commitService: CommitService){}
 
@@ -60,60 +67,109 @@ export class AppComponent implements OnInit {
   
       for( let element in this.data ){
         let commitDate = this.data[element].commiter.date;
-        //let committerName = this.data[element].commiter.name;
+        let committerName = this.data[element].commiter.name;
         
-        if ( this.map.get( commitDate) == null ){
+        if ( this.totalCommitMap.get( commitDate) == null ){
           console.log("not found");
-          this.map.set(commitDate, 1);
+          this.totalCommitMap.set(commitDate, 1);
           //this.dateLable.push(commitDate);
         }else{
-          let value = this.map.get(commitDate);
-          this.map.set(commitDate, ++value);
+          let value = this.totalCommitMap.get(commitDate);
+          this.totalCommitMap.set(commitDate, ++value);
         }      
+
+        if ( this.developerCommitMap.get(committerName) == null ){
+          this.developerCommitMap.set(committerName, 1);
+        }else{
+          let value = this.developerCommitMap.get(committerName);
+          this.developerCommitMap.set(committerName, ++value);
+        }
       }
 
-      this.map.forEach((value: number, key: string) => {
+      this.totalCommitMap.forEach((value: number, key: string) => {
         //console.log(key, value);
         this.dateLable.push(key);
         this.countLable.push(value);
-    });
+        this.dateColor.push('#1E90FF');
+        this.totalDateCommits++;
+      });
+
+      this.developerCommitMap.forEach((value: number, key: string) => {
+        //console.log(key, value);
+        this.committerLable.push(key);
+        this.committerCount.push(value);
+        this.comitterColor.push('#42f4ce');
+      });
 
       console.log( this.dateLable);
 
       
       this.showBarChart();
+      this.showBarChartCommitter();
   }
-
-  // generate the date wise commits 
-  dateCommitArray(){
-    //if ( this.totalCommitArray.keys)
-  }
-
-
 
   showBarChart(){
 
     this.BarChart = new Chart('barChart', {
       type: 'bar',
     data: {
-     //labels: ["2019-03-03", "2019-03-05", "2019-03-09", "2019-03-11", "2019-03-12", "2019-03-15"],
      labels: this.dateLable,
      datasets: [{
-         label: '# of Commits',
-         //data: [9,7 , 3, 5, 2, 100],
+         label: '# of Commits -- ' + this.totalDateCommits,
          data: this.countLable,
-         backgroundColor: [
-              '#1E90FF'
-         ],
-         borderColor: [
-              '#1E90FF'
-         ],
+         backgroundColor: "#1E90FF",    
          borderWidth: 1
      }]
     }, 
     options: {
      title:{
          text:"Commit Stats of All Developers",
+         display:true
+     },
+     scales: {
+         yAxes: [{
+             ticks: {
+                 beginAtZero:true
+             }
+         }]
+     },
+     annotation: {
+      annotations: [{
+        type: 'line',
+        mode: 'horizontal',
+        scaleID: 'y-axis-0',
+        value: 5,
+        borderColor: 'rgb(75, 192, 192)',
+        borderWidth: 4,
+        label: {
+          enabled: false,
+          content: 'Test label'
+        }
+      }]
+    }
+    }
+
+    });
+  }
+
+
+
+  showBarChartCommitter(){
+
+    this.BarChart = new Chart('comitterBarChart', {
+      type: 'horizontalBar',
+    data: {
+     labels: this.committerLable,
+     datasets: [{
+         label: '# of Commits by Developer',
+         data: this.committerCount,
+         backgroundColor: "#99cc00",
+         borderWidth: 1
+     }]
+    }, 
+    options: {
+     title:{
+         text:"Commit Stats for Individual Developers",
          display:true
      },
      scales: {
