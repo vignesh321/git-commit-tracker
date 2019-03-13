@@ -4,6 +4,7 @@ import { Chart } from 'chart.js';
 
 
 import SampleJson from '../assets/data/data.json';
+import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -13,17 +14,95 @@ import SampleJson from '../assets/data/data.json';
 export class AppComponent implements OnInit {
   
   title = 'Git Commit Charts';
-  LineChart=[];
   BarChart=[];
+  public data;
   
   public commits = [];
+  totalCommit: { key: string, value : number};
 
   //constructor(private _commitService: CommitService){}
 
   constructor(){
     console.log('Reading local json files');
-  console.log(SampleJson);
+    console.log(SampleJson);
+    this.data = SampleJson;
+    
+    var jsonString = `{
+      "commit": "3f4852fa5f932e5e815ef1be39c72ac8be4687d4",
+     "author": {
+        "name": "Andrew Clark",
+        "email": "git@andrewclark.io",
+        "date": "Fri, 8 Mar 2019 18:53:14 -0800"
+      },
+      "commiter": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "Fri, 8 Mar 2019 18:53:14 -0800"
+      }
+    }`
+    
+
+    var jsonStringList  = `
+      {
+        "commit": "3f4852fa5f932e5e815ef1be39c72ac8be4687d4",
+       "author": {
+          "name": "Andrew Clark",
+          "email": "git@andrewclark.io",
+          "date": "Fri, 8 Mar 2019 18:53:14 -0800"
+        },
+        "commiter": {
+          "name": "GitHub",
+          "email": "noreply@github.com",
+          "date": "Fri, 8 Mar 2019 18:53:14 -0800"
+        }
+      },
+      {
+      "commit": "3f4852fa5f932e5e815ef1be39c72ac8be4687d4",
+      "author": {
+         "name": "Andrew Clark",
+         "email": "git@andrewclark.io",
+         "date": "Fri, 8 Mar 2019 18:53:14 -0800"
+       },
+       "commiter": {
+         "name": "GitHub",
+         "email": "noreply@github.com",
+         "date": "Fri, 8 Mar 2019 18:53:14 -0800"
+       }
+     }
+    `;
+
+    var jsonObject = JSON.parse(jsonString);
+    var jsonObjectList : Object[] = JSON.parse(jsonStringList);
+
+    console.log( jsonObject.commit);
+    console.log( jsonObject.author.name);
+
+    for( let obj in jsonObjectList){
+      console.log( obj );
+      console.log( obj["commits.commit"]);
+      console.log( obj["author"]);
+    }
+    
+
+
+    //JSON.parse(this.data);
+
+    //console.log(this.createObjectFromJSON());
+
   }
+
+
+  public createObjectFromJSON(){
+    JSON.parse(this.data, (key, value) => {
+      if (typeof value === 'string') {
+        return value.toUpperCase();
+      }
+      return value;
+    });
+  }
+
+
+
   ngOnInit() {
   
     /* this._commitService.getCommitData()

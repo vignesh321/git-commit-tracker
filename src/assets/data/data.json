@@ -1,4 +1,5 @@
-[{
+{ 
+  "commits" :   [{
   "commit": "3f4852fa5f932e5e815ef1be39c72ac8be4687d4",
  "author": {
     "name": "Andrew Clark",
@@ -2233,4 +2234,5 @@
     "email": "brian.david.vaughn@gmail.com",
     "date": "Wed, 12 Dec 2018 10:07:07 -0800"
   }
-}]
+}
+]}
