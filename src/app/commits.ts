@@ -1,13 +1,18 @@
-export interface commits{
-    commit: String,
-    author: String,
-    emailId: String,
-    files: fileDiff[] 
-}
+export interface Author {
+        name: string;
+        email: string;
+        date: string;
+    }
 
+export interface Commiter {
+        name: string;
+        email: string;
+        date: string;
+    }
 
-export interface fileDiff{
-    fileType: String,
-    linesAdded: number,
-    linesDeleted: number
-}
+export interface fullCommit {
+        commit: string;
+        author: Author;
+        commiter: Commiter;
+    }
+

@@ -1,0 +1,5 @@
+generating the total commits graph
+1. create an object model with {  date, count } => increment if found 
+
+for extracting total commits per developer
+2. create a hash map with { usename, count } =>increment if found
