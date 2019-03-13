@@ -37,7 +37,6 @@ export class AppComponent implements OnInit {
 
     this.Http.get("../assets/data/data.json").subscribe(data=>{
       this.data = data['commits'];
-      console.log(this.data[1].author.name);
       this.doAfterconstructor();
     })
 
@@ -61,7 +60,7 @@ export class AppComponent implements OnInit {
   
       for( let element in this.data ){
         let commitDate = this.data[element].commiter.date;
-        let committerName = this.data[element].commiter.name;
+        //let committerName = this.data[element].commiter.name;
         
         if ( this.map.get( commitDate) == null ){
           console.log("not found");
@@ -70,16 +69,16 @@ export class AppComponent implements OnInit {
         }else{
           let value = this.map.get(commitDate);
           this.map.set(commitDate, ++value);
-        }
-
-        this.map.forEach((value: number, key: string) => {
-          //console.log(key, value);
-          this.dateLable.push(key);
-          this.countLable.push(value);
-      });
-
-        console.log( this.dateLable);
+        }      
       }
+
+      this.map.forEach((value: number, key: string) => {
+        //console.log(key, value);
+        this.dateLable.push(key);
+        this.countLable.push(value);
+    });
+
+      console.log( this.dateLable);
 
       
       this.showBarChart();
