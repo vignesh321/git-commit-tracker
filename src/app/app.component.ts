@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
 import {HttpClient} from '@angular/common/http';
-import {fullCommit, Commiter, Author} from "./commits"
+//import {fullCommit, Commiter, Author} from "./commits"
+import {fullCommit, newFullCommit} from "./commits"
 //import { CommitService } from './commit.service';
 
 
-import SampleJson from '../assets/data/data.json';
-import { JsonPipe } from '@angular/common';
 import { totalCommit } from './totalCommits';
+import { CompileShallowModuleMetadata } from '@angular/compiler';
 //import { totalCommitMap  ChildrenIntoArray } from '@angular/router/src/url_tree';
 
 @Component({
@@ -17,8 +17,9 @@ import { totalCommit } from './totalCommits';
 })
 export class AppComponent implements OnInit {
   
-  title = 'Git Commit Charts';
+  title = 'BitBucket Commit Analysis';
   BarChart=[];
+  PieChart=[];
   public data : fullCommit[] ;
 
   public dateLable: string[] = [];
@@ -31,6 +32,11 @@ export class AppComponent implements OnInit {
   public comitterColor: string[] = [];
   public totalAuthorCommits : number = 0;
   
+  public repoDataMap = new Map();
+  public repoData: string[] = [];
+  public repoDataCount:number[] = [];
+  repoColour: any = [];
+
   public commits = [];
   public totalCommit: { key: string, value : number};
   public totalCommitArray: totalCommit[];
@@ -38,18 +44,26 @@ export class AppComponent implements OnInit {
   public totalCommitMap = new Map();
   public developerCommitMap= new Map();
 
+
+  public newData: newFullCommit[];
+  
+
   //constructor(private _commitService: CommitService){}
 
   constructor(private Http : HttpClient){
 
 
-    this.Http.get("../assets/data/data.json").subscribe(data=>{
+    /* this.Http.get("../assets/data/data.json").subscribe(data=>{
+      this.data = data['commits'];
+      this.doAfterconstructor();
+    }) */
+
+    //"../assets/data/data-new.json"
+    this.Http.get("../assets/data/data.json").subscribe( data=>{
       this.data = data['commits'];
       this.doAfterconstructor();
     })
-
-    console.log('Reading local json files');
-    console.log(SampleJson);
+    
     
   }
 
@@ -67,25 +81,16 @@ export class AppComponent implements OnInit {
   doAfterconstructor(){
   
       for( let element in this.data ){
-        let commitDate = this.data[element].author.date;
-        //let committerName = this.data[element].author.name;
-        let committerName = this.data[element].author.email;
-        
-        if ( this.totalCommitMap.get( commitDate) == null ){
-          console.log("not found");
-          this.totalCommitMap.set(commitDate, 1);
-          //this.dateLable.push(commitDate);
-        }else{
-          let value = this.totalCommitMap.get(commitDate);
-          this.totalCommitMap.set(commitDate, value + 1);
-        }      
 
-        if ( this.developerCommitMap.get(committerName) == null ){
-          this.developerCommitMap.set(committerName, 1);
-        }else{
-          let value = this.developerCommitMap.get(committerName);
-          this.developerCommitMap.set(committerName, value+1);
-        }
+        let commitDate = this.data[element].committerDate;
+        let committerName = this.data[element].committerName;
+        let repoData = this.data[element].repo;
+        
+
+        
+        this.generateDateCommits(commitDate);
+        this.generateComitterData(committerName);
+        this.generateReposData(repoData);
       }
 
       this.totalCommitMap.forEach((value: number, key: string) => {
@@ -102,13 +107,60 @@ export class AppComponent implements OnInit {
         this.totalAuthorCommits++;
       });
 
-      console.log( this.dateLable);
+      this.repoDataMap.forEach((value: number, key: string) => {
+        
+        var randomColor = Math.floor(Math.random()*16777215).toString(16);
+        this.repoData.push(key);
+        this.repoDataCount.push(value);
+        this.repoColour.push("#"+randomColor);
+        console.log(randomColor);
+      });
 
+
+      //console.log( this.dateLable);
+      console.log( this.repoData);
+
+      //this.repoData= Array.from(new Set(this.repoData));//[... new Set(this.repoData)];
       
       this.showBarChart();
       this.showBarChartCommitter();
+      this.showPieChart();
+  }
+  
+
+
+  generateDateCommits(commitDate: string){
+    if ( this.totalCommitMap.get( commitDate) == null ){
+      //console.log("not found");
+      this.totalCommitMap.set(commitDate, 1);
+      //this.dateLable.push(commitDate);
+    }else{
+      let value = this.totalCommitMap.get(commitDate);
+      this.totalCommitMap.set(commitDate, value + 1);
+    }  
   }
 
+  generateComitterData(committerName: string){
+    if ( this.developerCommitMap.get(committerName) == null ){
+      this.developerCommitMap.set(committerName, 1);
+    }else{
+      let value = this.developerCommitMap.get(committerName);
+      this.developerCommitMap.set(committerName, value+1);
+    }
+  }
+
+  generateReposData(repoData: string){
+
+    if ( this.repoDataMap.get(repoData) == null ){
+      this.repoDataMap.set(repoData, 1);
+    }else{
+      let value = this.repoDataMap.get(repoData);
+      this.repoDataMap.set(repoData, value+1);
+    }
+  }
+
+
+  //Show Chart 1
   showBarChart(){
 
     this.BarChart = new Chart('barChart', {
@@ -134,7 +186,7 @@ export class AppComponent implements OnInit {
              }
          }]
      },
-     annotation: {
+     /* annotation: {
       annotations: [{
         type: 'line',
         mode: 'horizontal',
@@ -147,14 +199,14 @@ export class AppComponent implements OnInit {
           content: 'Test label'
         }
       }]
-    }
+    } */
     }
 
     });
   }
 
 
-
+  //Show Chart 2
   showBarChartCommitter(){
 
     this.BarChart = new Chart('comitterBarChart', {
@@ -183,6 +235,40 @@ export class AppComponent implements OnInit {
     }
     });
   }
+
+
+
+
+  showPieChart(){
+
+    this.BarChart = new Chart('repoChart', {
+      type: 'pie',
+    data: {
+     labels: this.repoData, //repoData,
+     datasets: [{
+         label: '# Commits in Repo',
+         data: this.repoDataCount,
+         backgroundColor: this.repoColour,
+         borderWidth: 1
+     }]
+    }, 
+    options: {
+     title:{
+         text:"Commit Stats for Single Repository",
+         display:true
+     }/* ,
+     scales: {
+         yAxes: [{
+             ticks: {
+                 beginAtZero:true
+             }
+         }]
+     } */
+    }
+    });
+  }
+
+
 }
 
 

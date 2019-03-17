@@ -1,4 +1,4 @@
-export interface Author {
+/* export interface Author {
         name: string;
         email: string;
         date: string;
@@ -16,3 +16,25 @@ export interface fullCommit {
         commiter: Commiter;
     }
 
+ */
+
+export interface fullCommit {
+    commit: string;
+    authorName: string;
+    authorEmail: string;
+    committerName: string;
+    committerEmail: string;
+    committerDate: string;
+    repo: string;
+}
+
+
+export interface newFullCommit {
+    commit: string;
+    authorName: string;
+    authorEmail: string;
+    committerName: string;
+    committerEmail: string;
+    committerDate: string;
+    repo: string;
+}
